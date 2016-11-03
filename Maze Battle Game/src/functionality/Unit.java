@@ -14,4 +14,20 @@ import javax.swing.JLabel;
 public class Unit {
     private JLabel label;
     private int ObjectType;
+    
+    public Unit() {
+        label = new JLabel();
+    }
+    
+    public void SetObjectType(int type) {
+        ObjectType = type;
+    }
+    
+    public void SetLabel() {
+        
+    }
+    
+    public JLabel GetLabel() {
+        return label;
+    }
 }
