@@ -5,8 +5,10 @@
  */
 package functionality;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.util.Vector;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -29,7 +31,7 @@ public class Map {
     }
     public void SetUnitType(JPanel map, int x, int y, int type) {
         matrix[x][y].SetObjectType(type);
-        
+        matrix[x][y].GetLabel().setBorder(BorderFactory.createLineBorder(Color.BLUE));
         if (type == 0)
             matrix[x][y].GetLabel().setIcon(new ImageIcon(new ImageIcon("images/path.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
@@ -40,6 +42,20 @@ public class Map {
     }
     
     public void SetBoundsLabel(int x, int y, int size) {
-        matrix[x][y].GetLabel().setBounds(x * size, y * size, size, size);
+        matrix[x][y].GetLabel().setBounds(y * size, x * size, size, size);
+    }
+    
+    public static void main(String args[]) {
+
+//khai bao va khoi tao mang 2 chieu 
+        int arr[][] = {{1, 2, 3}, {2, 4, 5}, {4, 4, 5}};
+
+//in mang hai chieu  
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 }
