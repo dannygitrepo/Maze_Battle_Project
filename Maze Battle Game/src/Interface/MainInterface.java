@@ -7,6 +7,7 @@ package Interface;
 
 import functionality.Map;
 import java.awt.Color;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -40,6 +41,8 @@ public class MainInterface extends javax.swing.JFrame {
                     m.SetUnitType(JMap,i, j, x);
                 }
             }
+            
+            Point p = m.SetTankOnMap(JMap, 15);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
