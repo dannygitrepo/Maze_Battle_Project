@@ -56,6 +56,10 @@ public class Server {
             PlayerThread t = new PlayerThread(m, sock);
             threads.addElement(t);
             
+            //1) Read UTF messages
+            //2) Processing messages (update map,...)
+            //3) Broadcast
+            
             // staring thread
             t.start();
         }
