@@ -9,9 +9,17 @@ import functionality.Map;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Scanner;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -26,28 +34,41 @@ public class MainInterface extends javax.swing.JFrame {
     /**
      * Creates new form MainInterface
      */
-    public MainInterface() {
+    Map m = new Map(36,12);
+    public MainInterface() throws IOException {
         initComponents();
         
-        Map m = new Map(36,12);
-        
         try {
+            // creating map by reading status file
             Scanner s = new Scanner(new BufferedReader(new FileReader("Reseau.txt")));
             for (int i = 0; i < 12; i++) {
                 for (int j = 0; j < 36; j++) {
                     String str = s.next();
                     int x = Integer.parseInt(str);
+                    //each value of x is a unit's status 
                     m.SetBoundsLabel(i, j, 15);
                     m.SetUnitType(JMap,i, j, x);
                 }
             }
             
-            Point p = m.SetTankOnMap(JMap, 15);
+            Point p = m.SetTankOnMap(JMap, 15, "Dang");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        // client socket
+        Socket socket = new Socket("", 6060);
+        // output stream
+        OutputStream outToServer = socket.getOutputStream();
+        DataOutputStream out = new DataOutputStream(outToServer);
+        // input stream
+        InputStream inFromServer = socket.getInputStream();
+        DataInputStream in = new DataInputStream(inFromServer);
     }
-
+    
+    public Map GetMap(){
+        return this.m;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -160,7 +181,11 @@ public class MainInterface extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainInterface().setVisible(true);
+                try {
+                    new MainInterface().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

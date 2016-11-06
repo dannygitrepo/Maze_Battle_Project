@@ -34,6 +34,13 @@ public class Map {
         }
     }
     
+    /**
+     * 
+     * @param map
+     * @param x
+     * @param y
+     * @param type 
+     */
     public void SetUnitType(JPanel map, int x, int y, int type) {
         matrix[x][y].SetObjectType(type);
         matrix[x][y].GetLabel().setBorder(BorderFactory.createLineBorder(Color.BLUE));
@@ -49,11 +56,24 @@ public class Map {
         map.add(matrix[x][y].GetLabel());
     }
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @param size 
+     */
     public void SetBoundsLabel(int x, int y, int size) {
         matrix[x][y].GetLabel().setBounds(y * size, x * size, size, size);
     }
     
-    public Point SetTankOnMap(JPanel map, int TankSize){
+    /**
+     * 
+     * @param map
+     * @param TankSize
+     * @param PlayerName
+     * @return 
+     */
+    public Point SetTankOnMap(JPanel map, int TankSize, String PlayerName){
         Random r1 = new Random();
         Point p = PathPoint.elementAt(r1.nextInt((PathPoint.size() - 1 - 0) + 1) + 0);
         matrix[p.x][p.y].SetObjectType(-1);
@@ -63,29 +83,36 @@ public class Map {
         int direction = r2.nextInt((4 - 1) + 1) + 1;
         System.out.println(direction);
         
+        
+        // tank - north direction
         if (direction == 1) {
-            Player tank = new Player("","NORTH",p,new JLabel(), 0, new Bomb());
+            Player tank = new Player(PlayerName,"NORTH",p,new JLabel(), 0, new Bomb());
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
             map.add(tank.getPhoto());
         }
+        // tank - south direction
         else if (direction == 2) {
-            Player tank = new Player("","SOUTH",p,new JLabel(), 0, new Bomb());
+            Player tank = new Player(PlayerName,"SOUTH",p,new JLabel(), 0, new Bomb());
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
             map.add(tank.getPhoto());
         }
+        
+        // tank - south west
         else if (direction == 3) {
-            Player tank = new Player("","WEST",p,new JLabel(), 0, new Bomb());
+            Player tank = new Player(PlayerName,"WEST",p,new JLabel(), 0, new Bomb());
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
             map.add(tank.getPhoto());
         }
+        
+        // tank - east direction
         else{
-            Player tank = new Player("","EAST",p,new JLabel(), 0, new Bomb());
+            Player tank = new Player(PlayerName,"EAST",p,new JLabel(), 0, new Bomb());
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
