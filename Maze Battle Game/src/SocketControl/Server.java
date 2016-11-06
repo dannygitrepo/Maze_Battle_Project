@@ -58,7 +58,7 @@ public class Server {
             
             //1) Read UTF messages
             //2) Processing messages (update map,...)
-            //3) Broadcast
+            //3) Broadcast (sending message to each PC by loop)
             
             // staring thread
             t.start();
