@@ -7,7 +7,13 @@ package SocketControl;
 
 import Interface.MainInterface;
 import functionality.Map;
+import functionality.Player;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import static java.lang.System.in;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -53,9 +59,10 @@ public class Server {
             sockets.addElement(sock);
             
             // creating one thread for each client
-            PlayerThread t = new PlayerThread(m, sock);
+            PlayerThread t = new PlayerThread(this, sock);
             threads.addElement(t);
             
+            // Creating input and output stream
             //1) Read UTF messages
             //2) Processing messages (update map,...)
             //3) Broadcast (sending message to each PC by loop)
@@ -64,6 +71,19 @@ public class Server {
             t.start();
         }
     }
+    
+    public Map GetMap() {
+        return this.m;
+    }
+    
+    public Vector<PlayerThread> GetThreads() {
+        return this.threads;
+    }
+    
+    public Player GetTank(int i){
+        return this.m.GetPlayer(i);
+    }
+    
     public static void main (String args[]) throws IOException{
         MainInterface Interface = new MainInterface();
         Server s = new Server(Interface.GetMap());

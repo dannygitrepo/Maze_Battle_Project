@@ -23,9 +23,12 @@ public class Map {
     private Unit[][] matrix;
     private Vector<Player> warriors;
     private Vector<Point> PathPoint;
-    public Map(int w, int h) {
+    private JPanel MapPanel;
+    private int PlayerID = -1;
+    public Map(int w, int h, JPanel panel) {
         matrix = new Unit[h][w];
         PathPoint = new Vector<>();
+        MapPanel = panel;
         warriors = new Vector<>();
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
@@ -41,7 +44,7 @@ public class Map {
      * @param y
      * @param type 
      */
-    public void SetUnitType(JPanel map, int x, int y, int type) {
+    public void SetUnitType(int x, int y, int type) {
         matrix[x][y].SetObjectType(type);
         matrix[x][y].GetLabel().setBorder(BorderFactory.createLineBorder(Color.BLUE));
         if (type == 0) {
@@ -53,7 +56,7 @@ public class Map {
         else
             matrix[x][y].GetLabel().setIcon(new ImageIcon(new ImageIcon("images/home.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-        map.add(matrix[x][y].GetLabel());
+        MapPanel.add(matrix[x][y].GetLabel());
     }
     
     /**
@@ -67,13 +70,20 @@ public class Map {
     }
     
     /**
+     * Move North
+     */
+    public void MoveNorth() {
+        
+    }
+    
+    /**
      * 
      * @param map
      * @param TankSize
      * @param PlayerName
      * @return 
      */
-    public Point SetTankOnMap(JPanel map, int TankSize, String PlayerName){
+    public Point SetTankOnMap(int TankSize, String PlayerName){
         Random r1 = new Random();
         Point p = PathPoint.elementAt(r1.nextInt((PathPoint.size() - 1 - 0) + 1) + 0);
         matrix[p.x][p.y].SetObjectType(-1);
@@ -90,7 +100,9 @@ public class Map {
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
-            map.add(tank.getPhoto());
+            MapPanel.add(tank.getPhoto());
+            this.AddTankToWarriors(tank);
+            this.IncreasePlayerIndexByOne();
         }
         // tank - south direction
         else if (direction == 2) {
@@ -98,7 +110,9 @@ public class Map {
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
-            map.add(tank.getPhoto());
+            MapPanel.add(tank.getPhoto());
+            this.AddTankToWarriors(tank);
+            this.IncreasePlayerIndexByOne();
         }
         
         // tank - south west
@@ -107,7 +121,9 @@ public class Map {
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
-            map.add(tank.getPhoto());
+            MapPanel.add(tank.getPhoto());
+            this.AddTankToWarriors(tank);
+            this.IncreasePlayerIndexByOne();
         }
         
         // tank - east direction
@@ -116,11 +132,27 @@ public class Map {
             tank.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
-            map.add(tank.getPhoto());
+            MapPanel.add(tank.getPhoto());
+            this.AddTankToWarriors(tank);
+            this.IncreasePlayerIndexByOne();
         }
         return p;
     }
     
+    private void IncreasePlayerIndexByOne() {
+        this.PlayerID ++;
+    }
+   /**
+    * Insert tank to warriors vector
+    * @param tank 
+    */
+    private void AddTankToWarriors(Player tank) {
+        this.warriors.addElement(tank);
+    }
+    
+    public Player GetPlayer(int i){
+        return this.warriors.elementAt(i);
+    }
     public static void main(String args[]) {
 
 //khai bao va khoi tao mang 2 chieu 

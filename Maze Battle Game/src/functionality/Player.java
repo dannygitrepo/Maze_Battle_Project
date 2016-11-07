@@ -18,6 +18,7 @@ public class Player {
     private Point pos;
     private JLabel photo;
     private int score;
+    private int HealthPoint;
     private Bomb ammunition;
     
     public Player(String Name, String Direction, Point p, JLabel photo, int score, Bomb ammunition) {
@@ -27,6 +28,7 @@ public class Player {
         this.photo = photo;
         this.score = score;
         this.ammunition = ammunition;
+        HealthPoint = 100;
     }
     
      public String getName() {

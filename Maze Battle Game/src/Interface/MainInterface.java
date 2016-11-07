@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -31,11 +32,9 @@ import javax.swing.border.Border;
  */
 public class MainInterface extends javax.swing.JFrame {
 
-    /**
-     * Creates new form MainInterface
-     */
-    Map m = new Map(36,12);
+    Map m;
     public MainInterface() throws IOException {
+        this.m = new Map(36,12, JMap);
         initComponents();
         
         try {
@@ -47,14 +46,18 @@ public class MainInterface extends javax.swing.JFrame {
                     int x = Integer.parseInt(str);
                     //each value of x is a unit's status 
                     m.SetBoundsLabel(i, j, 15);
-                    m.SetUnitType(JMap,i, j, x);
+                    m.SetUnitType(i, j, x);
                 }
             }
             
-            Point p = m.SetTankOnMap(JMap, 15, "Dang");
+            Point p = m.SetTankOnMap(15, "Dang");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.addRow(new Object[]{"You", "0", "100"});
+        
         
         // client socket
         Socket socket = new Socket("", 6060);
@@ -92,7 +95,7 @@ public class MainInterface extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Score", "Type"
+                "Name", "Score", "Endurance"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -104,6 +107,9 @@ public class MainInterface extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         Console.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { };
