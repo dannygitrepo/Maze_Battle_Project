@@ -49,15 +49,33 @@ public class PlayerThread implements Runnable{
                     // read player name from client
                     String playerName = in.readUTF();
                     server.GetMap().SetTankOnMap(15, playerName);
-                    Integer index = server.GetMap().GetPlayer(message);
+                    
+                    Integer index = server.GetMap().GetLastAddedPlayerIndex();
                     out.writeUTF(index.toString());
                 }
+                
+                // when the player moves their tank
+                // message 1 : move north
                 else if (message == 1) {
                     Player p = server.GetTank(Integer.parseInt(in.readUTF()));
-                    Map m = server.GetMap();
-                    
-                    
+                    p.MoveNorth(server.GetMap().GetMatrix());
                 }
+                // message 2: move south
+                else if (message == 2) {
+                    Player p = server.GetTank(Integer.parseInt(in.readUTF()));
+                    p.MoveSouth(server.GetMap().GetMatrix());
+                }
+                // message 3 : move east
+                else if (message == 3) {
+                    Player p = server.GetTank(Integer.parseInt(in.readUTF()));
+                    p.MoveEast(server.GetMap().GetMatrix());
+                }
+                // message 4: move west
+                else if (message == 4) {
+                    Player p = server.GetTank(Integer.parseInt(in.readUTF()));
+                    p.MoveWest(server.GetMap().GetMatrix());
+                }
+                
                 //3) Broadcast (sending message to each PC by loop)
             }
         } catch (IOException ex) {

@@ -72,14 +72,27 @@ public class Server {
         }
     }
     
+    /**
+     * Return map m
+     * @return 
+     */
     public Map GetMap() {
         return this.m;
     }
     
+    /**
+     * Get thread vector
+     * @return 
+     */
     public Vector<PlayerThread> GetThreads() {
         return this.threads;
     }
     
+    /**
+     * Get tank element at i
+     * @param i
+     * @return 
+     */
     public Player GetTank(int i){
         return this.m.GetPlayer(i);
     }

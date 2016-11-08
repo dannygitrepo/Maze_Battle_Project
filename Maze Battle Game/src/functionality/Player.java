@@ -13,6 +13,7 @@ import javax.swing.JLabel;
  * @author admin
  */
 public class Player {
+    private int OrderNum;
     private String Name;
     private String Direction;
     private Point pos;
@@ -77,5 +78,45 @@ public class Player {
 
     public void setAmmunition(Bomb ammunition) {
         this.ammunition = ammunition;
+    }
+    
+    public void setOrderNum(int OrderNum) {
+        this.OrderNum = OrderNum;
+    }
+    
+    public void MoveNorth(Unit[][] matrix) {
+        if (pos.y == 0)
+            return;
+        matrix[pos.x][pos.y].SetObjectType(0);
+        pos.y --;
+        matrix[pos.x][pos.y].SetObjectType(-1);
+        photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
+    }
+    
+    public void MoveSouth(Unit[][] matrix) {
+        if (pos.y == 11)
+            return;
+        matrix[pos.x][pos.y].SetObjectType(0);
+        pos.y ++;
+        matrix[pos.x][pos.y].SetObjectType(-1);
+        photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
+    }
+    
+    public void MoveEast(Unit[][] matrix) {
+        if (pos.x == 35)
+            return;
+        matrix[pos.x][pos.y].SetObjectType(0);
+        pos.x ++;
+        matrix[pos.x][pos.y].SetObjectType(-1);
+        photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
+    }
+    
+    public void MoveWest(Unit[][] matrix) {
+        if (pos.x == 0)
+            return;
+        matrix[pos.x][pos.y].SetObjectType(0);
+        pos.x --;
+        matrix[pos.x][pos.y].SetObjectType(-1);
+        photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
     }
 }

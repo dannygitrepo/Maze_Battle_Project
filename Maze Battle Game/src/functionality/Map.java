@@ -24,7 +24,7 @@ public class Map {
     private Vector<Player> warriors;
     private Vector<Point> PathPoint;
     private JPanel MapPanel;
-    private int PlayerID = -1;
+    
     public Map(int w, int h, JPanel panel) {
         matrix = new Unit[h][w];
         PathPoint = new Vector<>();
@@ -70,13 +70,6 @@ public class Map {
     }
     
     /**
-     * Move North
-     */
-    public void MoveNorth() {
-        
-    }
-    
-    /**
      * 
      * @param map
      * @param TankSize
@@ -86,6 +79,8 @@ public class Map {
     public Point SetTankOnMap(int TankSize, String PlayerName){
         Random r1 = new Random();
         Point p = PathPoint.elementAt(r1.nextInt((PathPoint.size() - 1 - 0) + 1) + 0);
+        
+        // set the position where the tank locates to -1
         matrix[p.x][p.y].SetObjectType(-1);
         
         System.out.println(p.x + " " + p.y);
@@ -101,8 +96,9 @@ public class Map {
 						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
             MapPanel.add(tank.getPhoto());
+            
             this.AddTankToWarriors(tank);
-            this.IncreasePlayerIndexByOne();
+            tank.setOrderNum(warriors.size() - 1);
         }
         // tank - south direction
         else if (direction == 2) {
@@ -112,7 +108,7 @@ public class Map {
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
             MapPanel.add(tank.getPhoto());
             this.AddTankToWarriors(tank);
-            this.IncreasePlayerIndexByOne();
+            tank.setOrderNum(warriors.size() - 1);
         }
         
         // tank - south west
@@ -123,7 +119,7 @@ public class Map {
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
             MapPanel.add(tank.getPhoto());
             this.AddTankToWarriors(tank);
-            this.IncreasePlayerIndexByOne();
+            tank.setOrderNum(warriors.size() - 1);
         }
         
         // tank - east direction
@@ -134,14 +130,11 @@ public class Map {
             tank.getPhoto().setBounds(p.y * TankSize, p.x * TankSize, TankSize, TankSize);
             MapPanel.add(tank.getPhoto());
             this.AddTankToWarriors(tank);
-            this.IncreasePlayerIndexByOne();
+            tank.setOrderNum(warriors.size() - 1);
         }
         return p;
     }
     
-    private void IncreasePlayerIndexByOne() {
-        this.PlayerID ++;
-    }
    /**
     * Insert tank to warriors vector
     * @param tank 
@@ -150,9 +143,31 @@ public class Map {
         this.warriors.addElement(tank);
     }
     
+    /**
+     * 
+     * @param i
+     * @return 
+     */
     public Player GetPlayer(int i){
         return this.warriors.elementAt(i);
     }
+    
+    /**
+     * Get Last Added Player Index
+     * @return 
+     */
+    public int GetLastAddedPlayerIndex() {
+        return warriors.size() - 1;
+    }
+    
+    /**
+     * Get matrix unit
+     * @return 
+     */
+    public Unit[][] GetMatrix() {
+        return this.matrix;
+    }
+    
     public static void main(String args[]) {
 
 //khai bao va khoi tao mang 2 chieu 
