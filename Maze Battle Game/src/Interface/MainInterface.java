@@ -6,8 +6,11 @@
 package Interface;
 
 import functionality.Map;
+import functionality.Player;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -25,18 +28,22 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 /**
  *
  * @author admin
  */
-public class MainInterface extends javax.swing.JFrame {
+public class MainInterface extends JFrame implements KeyListener{
 
     Map m;
+    Player p;
     public MainInterface() throws IOException {
-        this.m = new Map(36,12, JMap);
+        super("Demonstrating Keystroke Events");
         initComponents();
-        
+        this.m = new Map(36,12, JMap);
         try {
             // creating map by reading status file
             Scanner s = new Scanner(new BufferedReader(new FileReader("Reseau.txt")));
@@ -50,15 +57,18 @@ public class MainInterface extends javax.swing.JFrame {
                 }
             }
             
-            Point p = m.SetTankOnMap(15, "Dang");
+            p = m.SetTankOnMap(15, "Dang");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        this.setFocusable(true);   // Allow this panel to get focus.
+        // Adding the key listener here.
+        addKeyListener(this);
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{"You", "0", "100"});
-        
-        
+       
+        /*
         // client socket
         Socket socket = new Socket("", 6060);
         // output stream
@@ -67,6 +77,7 @@ public class MainInterface extends javax.swing.JFrame {
         // input stream
         InputStream inFromServer = socket.getInputStream();
         DataInputStream in = new DataInputStream(inFromServer);
+        */
     }
     
     public Map GetMap(){
@@ -89,6 +100,17 @@ public class MainInterface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                formKeyTyped(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -157,6 +179,19 @@ public class MainInterface extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+
+    }//GEN-LAST:event_formKeyPressed
+
+    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+
+    }//GEN-LAST:event_formKeyReleased
+
+    private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
+
+    }//GEN-LAST:event_formKeyTyped
+
+
     /**
      * @param args the command line arguments
      */
@@ -183,12 +218,13 @@ public class MainInterface extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(MainInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new MainInterface().setVisible(true);
+                    MainInterface application = new MainInterface();
+                    application.setVisible(true);
                 } catch (IOException ex) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -203,4 +239,117 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void keyTyped(KeyEvent event) {
+    }
+
+
+    public void keyPressed(KeyEvent event) {
+         /*DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        String line1 = "Key released: " + event.getKeyText(event.getKeyCode());
+        model.addRow(new Object[]{line1, "0", "100"});*/
+    }
+
+    @Override
+    public void keyReleased(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if (p.getDirection().equals("NORTH")) {
+                p.setDirection("EAST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("EAST")) {
+                p.setDirection("SOUTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("SOUTH")) {
+                p.setDirection("WEST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("WEST")) {
+                p.setDirection("NORTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+        }
+        else if (event.getKeyCode() == KeyEvent.VK_LEFT) {
+            if (p.getDirection().equals("NORTH")) {
+                p.setDirection("WEST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("EAST")) {
+                p.setDirection("NORTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("SOUTH")) {
+                p.setDirection("EAST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("WEST")) {
+                p.setDirection("SOUTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+        }
+        // go ahead
+        else if (event.getKeyCode() == KeyEvent.VK_UP) {
+            if (p.getDirection().equals("NORTH")) {
+                p.MoveNorth(m.GetMatrix());
+            }
+            else if (p.getDirection().equals("EAST")) {
+                p.MoveEast(m.GetMatrix());
+            }
+            else if (p.getDirection().equals("SOUTH")) {
+                p.MoveSouth(m.GetMatrix());
+            }
+            else if (p.getDirection().equals("WEST")) {
+                p.MoveWest(m.GetMatrix());
+            }
+        }
+        //go back
+        else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
+            if (p.getDirection().equals("NORTH")) {
+                p.MoveSouth(m.GetMatrix());
+            }
+            else if (p.getDirection().equals("EAST")) {
+                p.MoveWest(m.GetMatrix());
+            }
+            else if (p.getDirection().equals("SOUTH")) {
+                p.MoveNorth(m.GetMatrix());
+            }
+            else if (p.getDirection().equals("WEST")) {
+                p.MoveEast(m.GetMatrix());
+            }
+        }
+        
+        // turn back
+        else if (event.getKeyText(event.getKeyCode()).equals("U")) {
+            if (p.getDirection().equals("NORTH")) {
+                p.setDirection("SOUTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("EAST")) {
+                p.setDirection("WEST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("SOUTH")) {
+                p.setDirection("NORTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("WEST")) {
+                p.setDirection("EAST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+        }
+    }
 }

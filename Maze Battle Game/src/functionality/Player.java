@@ -87,6 +87,8 @@ public class Player {
     public void MoveNorth(Unit[][] matrix) {
         if (pos.y == 0)
             return;
+        if (matrix[pos.x][pos.y-1].GetObjectType() != 0)
+            return;
         matrix[pos.x][pos.y].SetObjectType(0);
         pos.y --;
         matrix[pos.x][pos.y].SetObjectType(-1);
@@ -95,6 +97,8 @@ public class Player {
     
     public void MoveSouth(Unit[][] matrix) {
         if (pos.y == 11)
+            return;
+        if (matrix[pos.x][pos.y + 1].GetObjectType() != 0)
             return;
         matrix[pos.x][pos.y].SetObjectType(0);
         pos.y ++;
@@ -105,6 +109,8 @@ public class Player {
     public void MoveEast(Unit[][] matrix) {
         if (pos.x == 35)
             return;
+        if (matrix[pos.x + 1][pos.y].GetObjectType() != 0)
+            return;
         matrix[pos.x][pos.y].SetObjectType(0);
         pos.x ++;
         matrix[pos.x][pos.y].SetObjectType(-1);
@@ -113,6 +119,8 @@ public class Player {
     
     public void MoveWest(Unit[][] matrix) {
         if (pos.x == 0)
+            return;
+        if (matrix[pos.x-1][pos.y].GetObjectType() != 0)
             return;
         matrix[pos.x][pos.y].SetObjectType(0);
         pos.x --;

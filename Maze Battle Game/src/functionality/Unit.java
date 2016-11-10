@@ -17,6 +17,7 @@ public class Unit {
     
     public Unit() {
         label = new JLabel();
+        ObjectType = 0;
     }
     
     public void SetObjectType(int type) {
@@ -29,5 +30,9 @@ public class Unit {
     
     public JLabel GetLabel() {
         return label;
+    }
+    
+    public int GetObjectType() {
+        return ObjectType;
     }
 }

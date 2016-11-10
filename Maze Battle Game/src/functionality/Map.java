@@ -76,17 +76,17 @@ public class Map {
      * @param PlayerName
      * @return 
      */
-    public Point SetTankOnMap(int TankSize, String PlayerName){
+    public Player SetTankOnMap(int TankSize, String PlayerName){
         Random r1 = new Random();
         Point p = PathPoint.elementAt(r1.nextInt((PathPoint.size() - 1 - 0) + 1) + 0);
         
         // set the position where the tank locates to -1
         matrix[p.x][p.y].SetObjectType(-1);
         
-        System.out.println(p.x + " " + p.y);
+//       System.out.println(p.x + " " + p.y);
         Random r2 = new Random();
         int direction = r2.nextInt((4 - 1) + 1) + 1;
-        System.out.println(direction);
+//        System.out.println(direction);
         
         
         // tank - north direction
@@ -99,6 +99,7 @@ public class Map {
             
             this.AddTankToWarriors(tank);
             tank.setOrderNum(warriors.size() - 1);
+            return tank;
         }
         // tank - south direction
         else if (direction == 2) {
@@ -109,6 +110,7 @@ public class Map {
             MapPanel.add(tank.getPhoto());
             this.AddTankToWarriors(tank);
             tank.setOrderNum(warriors.size() - 1);
+            return tank;
         }
         
         // tank - south west
@@ -120,6 +122,7 @@ public class Map {
             MapPanel.add(tank.getPhoto());
             this.AddTankToWarriors(tank);
             tank.setOrderNum(warriors.size() - 1);
+            return tank;
         }
         
         // tank - east direction
@@ -131,8 +134,8 @@ public class Map {
             MapPanel.add(tank.getPhoto());
             this.AddTankToWarriors(tank);
             tank.setOrderNum(warriors.size() - 1);
+            return tank;
         }
-        return p;
     }
     
    /**
