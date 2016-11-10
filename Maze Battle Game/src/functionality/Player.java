@@ -84,7 +84,7 @@ public class Player {
         this.OrderNum = OrderNum;
     }
     
-    public void MoveNorth(Unit[][] matrix) {
+    public void MoveWest(Unit[][] matrix) {
         if (pos.y == 0)
             return;
         if (matrix[pos.x][pos.y-1].GetObjectType() != 0)
@@ -95,8 +95,8 @@ public class Player {
         photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
     }
     
-    public void MoveSouth(Unit[][] matrix) {
-        if (pos.y == 11)
+    public void MoveEast(Unit[][] matrix) {
+        if (pos.y == 35)
             return;
         if (matrix[pos.x][pos.y + 1].GetObjectType() != 0)
             return;
@@ -106,8 +106,8 @@ public class Player {
         photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
     }
     
-    public void MoveEast(Unit[][] matrix) {
-        if (pos.x == 35)
+    public void MoveSouth(Unit[][] matrix) {
+        if (pos.x == 11)
             return;
         if (matrix[pos.x + 1][pos.y].GetObjectType() != 0)
             return;
@@ -117,7 +117,7 @@ public class Player {
         photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
     }
     
-    public void MoveWest(Unit[][] matrix) {
+    public void MoveNorth(Unit[][] matrix) {
         if (pos.x == 0)
             return;
         if (matrix[pos.x-1][pos.y].GetObjectType() != 0)

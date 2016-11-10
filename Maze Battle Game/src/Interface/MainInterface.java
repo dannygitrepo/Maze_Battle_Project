@@ -68,16 +68,19 @@ public class MainInterface extends JFrame implements KeyListener{
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{"You", "0", "100"});
        
-        /*
+        
         // client socket
         Socket socket = new Socket("", 6060);
         // output stream
         OutputStream outToServer = socket.getOutputStream();
         DataOutputStream out = new DataOutputStream(outToServer);
-        // input stream
+        
         InputStream inFromServer = socket.getInputStream();
         DataInputStream in = new DataInputStream(inFromServer);
-        */
+        
+        // send name to server
+        out.writeUTF(p.getName());
+        p.setOrderNum(Integer.parseInt(in.readUTF()));
     }
     
     public Map GetMap(){

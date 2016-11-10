@@ -45,6 +45,8 @@ public class PlayerThread implements Runnable{
                 int message = Integer.parseInt(in.readUTF());
 
                 //2) Processing messages (update map,...)
+                
+                // message 10 : a client enter
                 if (message == 10) {
                     // read player name from client
                     String playerName = in.readUTF();
