@@ -5,6 +5,8 @@
  */
 package functionality;
 
+import javax.swing.JLabel;
+
 /**
  *
  * @author admin
@@ -13,4 +15,5 @@ public class Bomb {
     private String Direction;
     private int Speed;
     private int Strength;
+    private JLabel cartridge;
 }

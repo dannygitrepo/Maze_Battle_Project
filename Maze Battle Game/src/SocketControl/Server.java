@@ -97,6 +97,13 @@ public class Server {
         return this.m.GetPlayer(i);
     }
     
+    /**
+     * get sockets in server
+     * @return 
+     */
+    public Vector<Socket> GetSockets() {
+        return this.sockets;
+    }
     public static void main (String args[]) throws IOException{
         MainInterface Interface = new MainInterface();
         Server s = new Server(Interface.GetMap());

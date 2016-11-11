@@ -13,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -42,10 +43,9 @@ public class PlayerThread implements Runnable{
             
             while (true) {
                 //1) Read UTF messages
-                int message = Integer.parseInt(in.readUTF());
+                Integer message = Integer.parseInt(in.readUTF());
 
                 //2) Processing messages (update map,...)
-                
                 // message 10 : a client enter
                 if (message == 10) {
                     // read player name from client
@@ -78,7 +78,52 @@ public class PlayerThread implements Runnable{
                     p.MoveWest(server.GetMap().GetMatrix());
                 }
                 
+                // when a player change their direction
+                // message : turn back
+                else if (message == 5) {
+                    Player p = server.GetTank(Integer.parseInt(in.readUTF()));
+                    p.TurnBack();
+                }
+                // message : turn right
+                else if (message == 6) {
+                    Player p = server.GetTank(Integer.parseInt(in.readUTF()));
+                    p.TurnRight();
+                }
+                // message : turn left
+                else if (message == 7) {
+                    Player p = server.GetTank(Integer.parseInt(in.readUTF()));
+                    p.TurnLeft();
+                }
+                
                 //3) Broadcast (sending message to each PC by loop)
+                for (int i = 0; i < server.GetSockets().size(); i++) {
+                    OutputStream OutToServer = server.GetSockets().elementAt(i).getOutputStream();
+                    out = new DataOutputStream(OutToServer);
+                    String mms = message.toString();
+                    
+                    // write message
+                    out.writeUTF(mms);
+                    // if a new player enter the game.
+                    if (message == 10) {
+                        if (server.GetMap().GetLastAddedPlayerIndex() == 0)
+                            break;
+                        else {
+                            // broadcast this player's info to each other player
+                            for (int j = 0; j < i; j++) {
+                                ObjectOutputStream oos = new ObjectOutputStream(server.GetSockets().elementAt(j).getOutputStream());
+                                oos.writeObject(j);
+                                oos.writeObject(server.GetTank(i));
+                            }
+                            
+                            // 
+                            ObjectOutputStream oos = new ObjectOutputStream(server.GetSockets().elementAt(i).getOutputStream());
+                            oos.writeObject(i);
+                            for (int j = 0; j < i; j++) {
+                                oos.writeObject(server.GetTank(j));
+                            }
+                        }
+                    }
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(PlayerThread.class.getName()).log(Level.SEVERE, null, ex);

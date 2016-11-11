@@ -5,7 +5,9 @@
  */
 package functionality;
 
+import java.awt.Image;
 import java.awt.Point;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 /**
@@ -32,6 +34,9 @@ public class Player {
         HealthPoint = 100;
     }
     
+    public int GetOrder() {
+        return this.OrderNum;
+    }
      public String getName() {
         return Name;
     }
@@ -126,5 +131,70 @@ public class Player {
         pos.x --;
         matrix[pos.x][pos.y].SetObjectType(-1);
         photo.setBounds(pos.y * 15, pos.x * 15, 15, 15);
+    }
+    
+    public void TurnRight(){
+        if (this.Direction.equals("NORTH")) {
+            this.setDirection("EAST");
+            this.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        } else if (this.getDirection().equals("EAST")) {
+            this.setDirection("SOUTH");
+            this.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        } else if (this.getDirection().equals("SOUTH")) {
+            this.setDirection("WEST");
+            this.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        } else if (this.getDirection().equals("WEST")) {
+            this.setDirection("NORTH");
+            this.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        }
+    }
+    
+    public void TurnLeft() {
+        Player p = this;
+        if (p.getDirection().equals("NORTH")) {
+            p.setDirection("WEST");
+            p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        } else if (p.getDirection().equals("EAST")) {
+            p.setDirection("NORTH");
+            p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        } else if (p.getDirection().equals("SOUTH")) {
+            p.setDirection("EAST");
+            p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        } else if (p.getDirection().equals("WEST")) {
+            p.setDirection("SOUTH");
+            p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
+                    .getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+        }
+    }
+    
+    public void TurnBack() {
+        Player p = this;
+        if (p.getDirection().equals("NORTH")) {
+                p.setDirection("SOUTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("EAST")) {
+                p.setDirection("WEST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("SOUTH")) {
+                p.setDirection("NORTH");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
+            else if (p.getDirection().equals("WEST")) {
+                p.setDirection("EAST");
+                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
+						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            }
     }
 }

@@ -40,6 +40,15 @@ public class MainInterface extends JFrame implements KeyListener{
 
     Map m;
     Player p;
+    Socket socket;
+    
+    // output stream
+    OutputStream outToServer;
+    DataOutputStream out;
+        
+    InputStream inFromServer;
+    DataInputStream in;
+    
     public MainInterface() throws IOException {
         super("Demonstrating Keystroke Events");
         initComponents();
@@ -68,15 +77,14 @@ public class MainInterface extends JFrame implements KeyListener{
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{"You", "0", "100"});
        
-        
         // client socket
-        Socket socket = new Socket("", 6060);
+        socket = new Socket("", 6060);
         // output stream
-        OutputStream outToServer = socket.getOutputStream();
-        DataOutputStream out = new DataOutputStream(outToServer);
-        
-        InputStream inFromServer = socket.getInputStream();
-        DataInputStream in = new DataInputStream(inFromServer);
+        outToServer = socket.getOutputStream();
+        out = new DataOutputStream(outToServer);
+        // input stream
+        inFromServer = socket.getInputStream();
+        in = new DataInputStream(inFromServer);
         
         // send name to server
         out.writeUTF(p.getName());
@@ -256,102 +264,147 @@ public class MainInterface extends JFrame implements KeyListener{
 
     @Override
     public void keyReleased(KeyEvent event) {
+        // turn right
         if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if (p.getDirection().equals("NORTH")) {
-                p.setDirection("EAST");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("EAST")) {
-                p.setDirection("SOUTH");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("SOUTH")) {
-                p.setDirection("WEST");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("WEST")) {
-                p.setDirection("NORTH");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            // turn right
+            p.TurnRight();
+            
+            try {
+                //send mms = 6
+                out.writeUTF("6");
+                // sending player's ID to server
+                out.writeUTF(new Integer(p.GetOrder()).toString());
+            } catch (IOException ex) {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        // turn left
         else if (event.getKeyCode() == KeyEvent.VK_LEFT) {
-            if (p.getDirection().equals("NORTH")) {
-                p.setDirection("WEST");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("EAST")) {
-                p.setDirection("NORTH");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("SOUTH")) {
-                p.setDirection("EAST");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("WEST")) {
-                p.setDirection("SOUTH");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            // turn left
+            p.TurnLeft();
+            
+            try {
+                // send mms = 7
+                out.writeUTF("7");
+                // sending ID's player
+                out.writeUTF(new Integer(p.GetOrder()).toString());
+            } catch (IOException ex) {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
         // go ahead
         else if (event.getKeyCode() == KeyEvent.VK_UP) {
-            if (p.getDirection().equals("NORTH")) {
-                p.MoveNorth(m.GetMatrix());
-            }
-            else if (p.getDirection().equals("EAST")) {
-                p.MoveEast(m.GetMatrix());
-            }
-            else if (p.getDirection().equals("SOUTH")) {
-                p.MoveSouth(m.GetMatrix());
-            }
-            else if (p.getDirection().equals("WEST")) {
-                p.MoveWest(m.GetMatrix());
+            switch (p.getDirection()) {
+                case "NORTH":
+                    p.MoveNorth(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("1");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+                case "EAST":
+                    p.MoveEast(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("3");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+                case "SOUTH":
+                    p.MoveSouth(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("2");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+                case "WEST":
+                    p.MoveWest(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("4");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
             }
         }
+        
         //go back
         else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (p.getDirection().equals("NORTH")) {
-                p.MoveSouth(m.GetMatrix());
-            }
-            else if (p.getDirection().equals("EAST")) {
-                p.MoveWest(m.GetMatrix());
-            }
-            else if (p.getDirection().equals("SOUTH")) {
-                p.MoveNorth(m.GetMatrix());
-            }
-            else if (p.getDirection().equals("WEST")) {
-                p.MoveEast(m.GetMatrix());
+            switch (p.getDirection()) {
+                case "NORTH":
+                    p.MoveSouth(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("2");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+                case "EAST":
+                    p.MoveWest(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("4");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+                case "SOUTH":
+                    p.MoveNorth(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("1");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
+                case "WEST":
+                    p.MoveEast(m.GetMatrix());
+                    {
+                        try {
+                            out.writeUTF("3");
+                            out.writeUTF(new Integer(p.GetOrder()).toString());
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
             }
         }
         
         // turn back
         else if (event.getKeyText(event.getKeyCode()).equals("U")) {
-            if (p.getDirection().equals("NORTH")) {
-                p.setDirection("SOUTH");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-south.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("EAST")) {
-                p.setDirection("WEST");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-west.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("SOUTH")) {
-                p.setDirection("NORTH");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-north.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
-            }
-            else if (p.getDirection().equals("WEST")) {
-                p.setDirection("EAST");
-                p.getPhoto().setIcon(new ImageIcon(new ImageIcon("images/tank-east.png").getImage()
-						.getScaledInstance(15, 15, Image.SCALE_AREA_AVERAGING)));
+            p.TurnBack();
+            
+            try {
+                // send mms = 5
+                out.writeUTF("5");
+                // sending ID's player
+                out.writeUTF(new Integer(p.GetOrder()).toString());
+            } catch (IOException ex) {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
