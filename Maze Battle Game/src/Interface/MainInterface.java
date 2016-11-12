@@ -30,8 +30,13 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import thread.GettingMessageFromServerThread;
 /**
  *
  * @author admin
@@ -44,12 +49,15 @@ public class MainInterface extends JFrame implements KeyListener{
     
     // output stream
     OutputStream outToServer;
-    DataOutputStream out;
+    ObjectOutputStream out;
         
     InputStream inFromServer;
-    DataInputStream in;
+    ObjectInputStream in;
     
-    public MainInterface() throws IOException {
+    LinkedList players = new LinkedList();
+    GettingMessageFromServerThread thread;
+    String name;
+    public MainInterface(String PlayerName) throws IOException {
         super("Demonstrating Keystroke Events");
         initComponents();
         this.m = new Map(36,12, JMap);
@@ -65,8 +73,7 @@ public class MainInterface extends JFrame implements KeyListener{
                     m.SetUnitType(i, j, x);
                 }
             }
-            
-            p = m.SetTankOnMap(15, "Dang");
+            name = PlayerName;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -75,22 +82,50 @@ public class MainInterface extends JFrame implements KeyListener{
         // Adding the key listener here.
         addKeyListener(this);
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.addRow(new Object[]{"You", "0", "100"});
-       
-        // client socket
-        socket = new Socket("", 6060);
-        // output stream
-        outToServer = socket.getOutputStream();
-        out = new DataOutputStream(outToServer);
-        // input stream
-        inFromServer = socket.getInputStream();
-        in = new DataInputStream(inFromServer);
-        
-        // send name to server
-        out.writeUTF(p.getName());
-        p.setOrderNum(Integer.parseInt(in.readUTF()));
+        model.addRow(new Object[]{"You", "0", "100"});      
     }
     
+    public GettingMessageFromServerThread GetThread() throws IOException, ClassNotFoundException {
+ 
+        p = m.SetTankOnMap(15, name);
+        // client socket
+        socket = new Socket("192.168.112.1", 6060);
+        // output stream
+        outToServer = socket.getOutputStream();
+        out = new ObjectOutputStream(outToServer);
+        // input stream
+        inFromServer = socket.getInputStream();
+        in = new ObjectInputStream(inFromServer);
+        
+        // send message 10 to server
+        out.writeObject("10");/* sai thu 1 : gui so nguyen khi server doc so nguyen*/
+        out.writeObject(p.getName());/* sai thu 2: phai gui name client*/
+        
+        thread = new GettingMessageFromServerThread(socket, p, out, in, players, JMap, jTable1);
+        
+        // set ID for player
+        p.setOrderNum((int) in.readObject());
+        
+        // add orther players
+        int i = 0;
+        while (i < p.GetOrder()) {
+            Player AddedPlayer = (Player) in.readObject();
+            //PlayerList.add(p.GetOrder(), p);
+            if (AddedPlayer == null) {
+                break;
+            }
+            players.add(AddedPlayer.GetOrder(), AddedPlayer);
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.addRow(new Object[]{AddedPlayer.getName(), "0", "100"});
+            
+            JMap.add(AddedPlayer.getPhoto());
+        }
+        
+        System.out.println(p.GetOrder());
+        players.add(p.GetOrder(), p);
+        
+        return this.thread;
+    }
     public Map GetMap(){
         return this.m;
     }
@@ -233,12 +268,12 @@ public class MainInterface extends JFrame implements KeyListener{
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    MainInterface application = new MainInterface();
-                    application.setVisible(true);
+                /*try {
+                    //MainInterface application = new MainInterface();
+                    //application.setVisible(true);
                 } catch (IOException ex) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }*/
             }
         });
     }

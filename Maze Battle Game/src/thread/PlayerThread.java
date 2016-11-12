@@ -5,6 +5,7 @@
  */
 package thread;
 
+import Interface.MainInterface;
 import SocketControl.Server;
 import functionality.Map;
 import functionality.Player;
@@ -13,6 +14,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -27,7 +29,8 @@ public class PlayerThread implements Runnable{
     private Thread t = new Thread(this);
     private Server server;
     private Socket sock;
-
+    private Integer index;
+    
     public PlayerThread(Server s, Socket sock){
         server = s;
         this.sock = sock; 
@@ -36,24 +39,33 @@ public class PlayerThread implements Runnable{
     public void run() {
         try {
            // Creating input and output stream
-            OutputStream outToServer = sock.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToServer);
-            InputStream inFromServer = sock.getInputStream();
-            DataInputStream in = new DataInputStream(inFromServer);
+            ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             
             while (true) {
                 //1) Read UTF messages
-                Integer message = Integer.parseInt(in.readUTF());
-
+                Integer message = Integer.parseInt((String)in.readObject());
+                System.out.println(message);
+                
                 //2) Processing messages (update map,...)
                 // message 10 : a client enter
                 if (message == 10) {
                     // read player name from client
-                    String playerName = in.readUTF();
+                    String playerName = (String)in.readObject();
+                    System.out.println(playerName);
                     server.GetMap().SetTankOnMap(15, playerName);
                     
-                    Integer index = server.GetMap().GetLastAddedPlayerIndex();
-                    out.writeUTF(index.toString());
+                    // create ID for client (player) and send it to client
+                    index = server.GetMap().GetLastAddedPlayerIndex();
+                    out.writeObject(index); //(1)
+                    for (int i = 0; i <= index; i++) {
+                        System.out.println(i + server.GetTank(i).getName());
+                    }
+                    
+                    // send all other clients to new player
+                    for (int j = 0; j < index; j++) {
+                        out.writeObject(server.GetTank(j)); //(2)
+                    }
                 }
                 
                 // when the player moves their tank
@@ -96,41 +108,23 @@ public class PlayerThread implements Runnable{
                 }
                 
                 //3) Broadcast (sending message to each PC by loop)
-                for (int i = 0; i < server.GetSockets().size(); i++) {
-                    OutputStream OutToServer = server.GetSockets().elementAt(i).getOutputStream();
-                    out = new DataOutputStream(OutToServer);
-                    String mms = message.toString();
-                    
-                    // write message
-                    out.writeUTF(mms);
-                    // if a new player enter the game.
-                    if (message == 10) {
-                        if (server.GetMap().GetLastAddedPlayerIndex() == 0)
-                            break;
-                        else {
-                            // broadcast this player's info to each other player
-                            for (int j = 0; j < i; j++) {
-                                ObjectOutputStream oos = new ObjectOutputStream(server.GetSockets().elementAt(j).getOutputStream());
-                                oos.writeObject(j);
-                                oos.writeObject(server.GetTank(i));
-                            }
-                            
-                            // 
-                            ObjectOutputStream oos = new ObjectOutputStream(server.GetSockets().elementAt(i).getOutputStream());
-                            oos.writeObject(i);
-                            for (int j = 0; j < i; j++) {
-                                oos.writeObject(server.GetTank(j));
-                            }
-                        }
-                    }
+                for (int j = 0; j < index; j++) {
+                    ObjectOutputStream oos = new ObjectOutputStream(server.GetSockets().elementAt(j).getOutputStream());
+                    oos.writeObject(10);
+                    oos.writeObject(server.GetTank(index));
                 }
             }
         } catch (IOException ex) {
+            Logger.getLogger(PlayerThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(PlayerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void start() {
-        t.start();
+        t.run();
+    }
+    
+    public static void main(String args[]) throws IOException {
     }
 }

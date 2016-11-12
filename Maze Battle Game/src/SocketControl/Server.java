@@ -105,7 +105,7 @@ public class Server {
         return this.sockets;
     }
     public static void main (String args[]) throws IOException{
-        MainInterface Interface = new MainInterface();
+        MainInterface Interface = new MainInterface("");
         Server s = new Server(Interface.GetMap());
         s.WaitAndConnect();
     }

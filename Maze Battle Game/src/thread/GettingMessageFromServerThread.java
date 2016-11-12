@@ -12,8 +12,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,33 +25,39 @@ import java.util.logging.Logger;
  */
 public class GettingMessageFromServerThread extends Thread{
     private Socket socket;
-    private DataOutputStream out;
-    private DataInputStream in;
     private ObjectInputStream ois;
 
     private ObjectOutputStream oos;
     private Player p;
-    public GettingMessageFromServerThread(Socket sock, Player player, DataOutputStream out, DataInputStream in) throws IOException {
+    
+    private JPanel MapPanel;
+    private LinkedList<Player> PlayerList;
+    private DefaultTableModel model;
+    public GettingMessageFromServerThread(Socket sock, Player player, ObjectOutputStream out, ObjectInputStream in, LinkedList Players, JPanel jmap, JTable PlayerTable) throws IOException {
         socket = sock;
-        this.out = out;
-        this.in = in;
-        ois = new ObjectInputStream(sock.getInputStream());
-        oos = new ObjectOutputStream(sock.getOutputStream());
+        this.oos = out;
+        this.ois = in;
+        //ois = new ObjectInputStream(sock.getInputStream());
+        //oos = new ObjectOutputStream(sock.getOutputStream());
         p = player;
+        MapPanel = jmap;
+        PlayerList = Players;
+        model = (DefaultTableModel) PlayerTable.getModel();
     }
     public void run(){
         try {
-            // catch message
-            int message = Integer.parseInt(in.readUTF());
-            if (message == 10) {
-                int id1 = Integer.parseInt(in.readUTF());
-                p.setOrderNum(id1);
-                int id2 = (int)ois.readObject();
-                if (id2 != p.GetOrder()) {
+            while (true) {
+                // catch message
+                Integer message = (Integer)ois.readObject(); /*sai 3: kg the cast tu integer sang string.*/
+                System.out.println("-----------" + message + "----------");
+                //Integer message = Integer.parseInt(m);
+                
+                // a new player comes in, and you must add him
+                if (message == 10) {
                     Player NewPlayer = (Player)ois.readObject();
-                }
-                else {
-                    
+                    PlayerList.add(NewPlayer.GetOrder(), NewPlayer);
+                    model.addRow(new Object[]{NewPlayer.getName(), "0", "100"});
+                    MapPanel.add(NewPlayer.getPhoto());
                 }
             }
         } catch (IOException ex) {
